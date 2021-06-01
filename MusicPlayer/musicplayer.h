@@ -29,40 +29,20 @@ public:
     std::thread playingThread;
     bool isRunning = false;
     MusicPlayer();
-    void AddToQueue(const QString& path)
-    {
-        queue.push_back(trackFactory.CreateTrack(path));
-    }
-    void RemoveFromQueue(const QString& path)
-    {
-        deque<unique_ptr<Track>>::iterator toDelete = queue.end();
-        for(deque<unique_ptr<Track>>::iterator it = queue.begin(); it != queue.end(); ++it)
-        {
-
-            if((*(it))->path == path)
-            {
-                toDelete = it;
-                break;
-            }
-        }
-       queue.erase(toDelete);
-    }
-    void GetNextTrack()
-    {
-        currentSong = move(queue.front());
-        queue.pop_front();
-    }
+    void AddToQueue(const QString& path);
+    void RemoveFromQueue(const QString& path);
+    void GetNextTrack();
     bool Play();
 
 
 };
 
 
-bool checkErrorsForAlc(const std::string& filename, const std::uint_fast32_t line, ALCdevice* device);
-bool checkErrorsForAl(const std::string& filename, const std::uint_fast32_t line);
+bool checkErrorsForAlc(const std::string& filename, const size_t line, ALCdevice* device);
+bool checkErrorsForAl(const std::string& filename, const size_t line);
 
 template<typename alcFunction, typename... Params> auto callAlcWrap(const char* filename,
-                 const std::uint_fast32_t line,
+                 const size_t line,
                  alcFunction function,
                  ALCdevice* device,
                  Params... params)
@@ -75,7 +55,7 @@ template<typename alcFunction, typename... Params> auto callAlcWrap(const char* 
 
 template<typename alcFunction, typename ReturnType, typename... Params>
 auto callAlcWrap(const char* filename,
-                 const std::uint_fast32_t line,
+                 const size_t line,
                  alcFunction function,
                  ReturnType& returnValue,
                  ALCdevice* device,

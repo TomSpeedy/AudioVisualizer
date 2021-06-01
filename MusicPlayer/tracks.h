@@ -35,7 +35,7 @@ class WavTrack final :
 {
 
     struct  WavHeader{
-        char                riffHeader[4];        // RIFF Header      Magic header
+        char                riffHeader[4];        // RIFF Header
         unsigned long       chunkSize;      // RIFF Chunk Size
         char                waveHeader[4];        // WAVE Header
         char                fmtHeader[4];         // FMT header

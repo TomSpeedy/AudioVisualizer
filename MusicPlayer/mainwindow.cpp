@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->volumeSlider->setValue((int)(this->ui->volumeSlider->maximum() * defaultVolume));
     scene = make_unique<QGraphicsScene>(this);
     view =  make_unique<QGraphicsView>(this->ui->graphicsView);
-    //this->ui->graaddWidget(view.get());
     visualizer = AudioVisualizer(&this->musicPlayer, std::move(scene), std::move(view));
 }
 
@@ -24,8 +23,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-
+//add song to mp3Player
 void MainWindow::on_addToQueueButton_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Select song"), "D:/source/repos/Qt/MusicPlayer", tr("Sound files (*.mp3 *.wav)"));
@@ -58,13 +56,15 @@ void MainWindow::on_previousButton_clicked()
 {
 
 }
+//timer tick represents updating the progressbar
 void MainWindow::startMyTimer()
 {
     this->progressTimer.start();
 }
+
 void MainWindow::on_playButton_clicked()
 {
-    QTextStream debug( stdout );
+
     if( musicPlayer.queue.size() > 0 && (musicPlayer.currentSong == nullptr || musicPlayer.currentSong->progress == 1))
     {        
         this->musicPlayer.GetNextTrack();        
@@ -93,7 +93,6 @@ void MainWindow::on_playButton_clicked()
 
     }
 
-    //musicPlayer.playingThread.join();
 }
 
 

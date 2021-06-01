@@ -101,7 +101,6 @@ bool MusicPlayer::Play()
             callAl(alSourcef, source, AL_GAIN, this->volume);
             callAl(alGetSourcei, source, AL_SOURCE_STATE, &state);
             }
-            //deb << currentOffset << Qt::endl;
 
         }
         this->currentSong->progress = 1;
@@ -116,7 +115,33 @@ bool MusicPlayer::Play()
 
         return true;
 }
-bool checkErrorsForAlc(const std::string& filename, const std::uint_fast32_t line, ALCdevice* device)
+
+void MusicPlayer::AddToQueue(const QString& path)
+{
+    queue.push_back(trackFactory.CreateTrack(path));
+}
+
+void MusicPlayer::RemoveFromQueue(const QString& path)
+{
+    deque<unique_ptr<Track>>::iterator toDelete = queue.end();
+    for(deque<unique_ptr<Track>>::iterator it = queue.begin(); it != queue.end(); ++it)
+    {
+
+        if((*(it))->path == path)
+        {
+            toDelete = it;
+            break;
+        }
+    }
+   queue.erase(toDelete);
+}
+
+void MusicPlayer::GetNextTrack()
+{
+    currentSong = move(queue.front());
+    queue.pop_front();
+}
+bool checkErrorsForAlc(const std::string& filename, const size_t line, ALCdevice* device)
 {
     ALCenum error = alcGetError(device);
     if(error != ALC_NO_ERROR)
@@ -147,7 +172,7 @@ bool checkErrorsForAlc(const std::string& filename, const std::uint_fast32_t lin
     }
     return true;
 }
-bool checkErrorsForAl(const std::string& filename, const std::uint_fast32_t line)
+bool checkErrorsForAl(const std::string& filename, const size_t line)
 {
     ALenum error = alGetError();
     if(error != AL_NO_ERROR)
@@ -156,22 +181,22 @@ bool checkErrorsForAl(const std::string& filename, const std::uint_fast32_t line
         switch(error)
         {
         case AL_INVALID_NAME:
-            std::cerr << "AL_INVALID_NAME: a bad name (ID) was passed to an OpenAL function";
+            std::cerr << "Error a bad name (ID) was passed to an OpenAL function";
             break;
         case AL_INVALID_ENUM:
-            std::cerr << "AL_INVALID_ENUM: an invalid enum value was passed to an OpenAL function";
+            std::cerr << "Error: an invalid enum value was passed to an OpenAL function";
             break;
         case AL_INVALID_VALUE:
-            std::cerr << "AL_INVALID_VALUE: an invalid value was passed to an OpenAL function";
+            std::cerr << "Error: an invalid value was passed to an OpenAL function";
             break;
         case AL_INVALID_OPERATION:
-            std::cerr << "AL_INVALID_OPERATION: the requested operation is not valid";
+            std::cerr << "Error: the requested operation is not valid";
             break;
         case AL_OUT_OF_MEMORY:
-            std::cerr << "AL_OUT_OF_MEMORY: the requested operation resulted in OpenAL running out of memory";
+            std::cerr << "Error: the requested operation resulted in OpenAL running out of memory";
             break;
         default:
-            std::cerr << "UNKNOWN AL ERROR: " << error;
+            std::cerr << "Error: " << error;
         }
         std::cerr << std::endl;
         return false;
